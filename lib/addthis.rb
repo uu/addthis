@@ -31,7 +31,7 @@ module Jaap3
             url, options = extract_addthis_url_and_options(args)
             options[:button_html] = yield if block_given?
             options = Jaap3::Addthis::#{func.upcase}_BUTTON_DEFAULTS.merge(options)
-            s = %Q(<a href="http://www.addthis.com/bookmark.php?v=20" onmouseover="\#{addthis_open("", url, options[:page_title])}" onmouseout="addthis_close()" onclick="return addthis_sendto()" title="\#{options[:title]}">)
+            s = %Q(<a href="http://www.addthis.com/bookmark.php?v=20" onclick="\#{addthis_open("", url, options[:page_title])}" onmouseout="addthis_close()" onclick="return addthis_sendto()" title="\#{options[:title]}">)
             addthis_tag(s, options)
           end
         EOS
