@@ -1,3 +1,5 @@
+require "addthis/version"
+
 module Jaap3
   module Addthis
     CONFIG = {:publisher => ""}
