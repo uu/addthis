@@ -47,11 +47,15 @@ module Jaap3
         addthis_tag(s, options)
       end
 
-      def addthis_feed_button(url, *args)
+       def addthis_feed_button(url, *args)
         options = FEED_BUTTON_DEFAULTS.merge(extract_addthis_options(args))
         options[:button_html] = yield if block_given?
-        s = %Q{<a href="http://www.addthis.com/feed.php?pub=#{options[:publisher]}&h1=#{url.gsub(/[^a-zA-Z0-9_\.\-]/n) {|c| sprintf('%%%02x', c[0]) }}&t1=" onclick="#{addthis_open("feed", url)}" title="#{options[:title]}" target="_blank">}
-        addthis_tag(s, options)
+		if RUBY_VERSION =~ /\A1\.9/
+		  s = %Q{<a href="http://www.addthis.com/feed.php?pub=#{options[:publisher]}&h1=#{url.gsub(/[^a-zA-Z0-9_\.\-]/n) {|c| sprintf('%%%02x', c[0].ord) }}&t1=" onclick="#{addthis_open("feed", url)}" title="#{options[:title]}" target="_blank">}
+		else 
+		  s = %Q{<a href="http://www.addthis.com/feed.php?pub=#{options[:publisher]}&h1=#{url.gsub(/[^a-zA-Z0-9_\.\-]/n) {|c| sprintf('%%%02x', c[0]) }}&t1=" onclick="#{addthis_open("feed", url)}" title="#{options[:title]}" target="_blank">}
+        end
+		addthis_tag(s, options)
       end
 
       protected
@@ -69,6 +73,7 @@ module Jaap3
         [:brand, :header_color, :header_background, :offset_top, :offset_left, :hover_delay, :options, :language].each do |custom|
           s << "var addthis_#{custom} = #{options[custom].is_a?(Integer) ? options[custom] : "'#{options[custom]}'"};" unless options[custom].nil?
         end
+		s << "var addthis_config = { ui_language: '#{options[:language]}'};" unless options[:language].nil?
         s << "</script>"
       end
 
